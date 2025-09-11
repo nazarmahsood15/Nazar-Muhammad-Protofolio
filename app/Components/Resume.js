@@ -1,10 +1,9 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import { Download, FileText, Briefcase, Calendar, MapPin, Award, BookOpen, Clock, Send } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Download, FileText, Briefcase, Calendar, MapPin, Award, BookOpen, Send } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Particles from "./Particles";
-
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -51,7 +50,7 @@ export default function Resume() {
         location: "Karachi, Pakistan",
         description: "Learned industry best practices and contributed to real-world projects.",
         achievements: [
-          "Assisted in developing company's main product features",
+          "Assisted in developing company&apos;s main product features",
           "Participated in code reviews and agile development process",
           "Fixed bugs and implemented new features in existing codebase"
         ]
@@ -129,6 +128,15 @@ export default function Resume() {
     ]
   };
 
+  const downloadCV = useCallback(() => {
+    const link = document.createElement("a");
+    link.href = "/cv.pdf";
+    link.download = "cv.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, []);
+
   useEffect(() => {
     // Animate title
     gsap.fromTo(titleRef.current, 
@@ -157,29 +165,23 @@ export default function Resume() {
         );
       });
     }
+
+    // Clean up ScrollTrigger on component unmount
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, [activeTab]);
-  
-const downloadCV = () => {
-  const link = document.createElement("a");
-  link.href = "/cv.pdf"; // Only the relative path from public
-  link.download = "cv.pdf";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-
 
   return (
     <section id="resume" className="py-20 bg-white dark:bg-black text-black dark:text-white">
-         <Particles count={40} className="absolute inset-0 z-0" />
+      <Particles count={40} className="absolute inset-0 z-0" />
       
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <h2 ref={titleRef} className="text-4xl md:text-5xl font-bold text-center mb-4">
           My <span className="text-green-500 dark:text-green-400">Resume</span>
         </h2>
         <p className="text-gray-600 dark:text-gray-400 text-center max-w-2xl mx-auto mb-12">
-          Here's a summary of my experience, education, and skills. Download my full CV for more details.
+          Here&apos;s a summary of my experience, education, and skills. Download my full CV for more details.
         </p>
 
         {/* Download Button */}
@@ -196,50 +198,25 @@ const downloadCV = () => {
 
         {/* Resume Tabs */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <button
-            onClick={() => setActiveTab("experience")}
-            className={`px-6 py-3 rounded-lg flex items-center gap-2 transition-all ${
-              activeTab === "experience"
-                ? "bg-green-500 dark:bg-green-600 text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-            }`}
-          >
-            <Briefcase size={18} />
-            Experience
-          </button>
-          <button
-            onClick={() => setActiveTab("education")}
-            className={`px-6 py-3 rounded-lg flex items-center gap-2 transition-all ${
-              activeTab === "education"
-                ? "bg-green-500 dark:bg-green-600 text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-            }`}
-          >
-            <BookOpen size={18} />
-            Education
-          </button>
-          <button
-            onClick={() => setActiveTab("skills")}
-            className={`px-6 py-3 rounded-lg flex items-center gap-2 transition-all ${
-              activeTab === "skills"
-                ? "bg-green-500 dark:bg-green-600 text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-            }`}
-          >
-            <Award size={18} />
-            Skills
-          </button>
-          <button
-            onClick={() => setActiveTab("certifications")}
-            className={`px-6 py-3 rounded-lg flex items-center gap-2 transition-all ${
-              activeTab === "certifications"
-                ? "bg-green-500 dark:bg-green-600 text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-            }`}
-          >
-            <Award size={18} />
-            Certifications
-          </button>
+          {[
+            { id: "experience", label: "Experience", icon: Briefcase },
+            { id: "education", label: "Education", icon: BookOpen },
+            { id: "skills", label: "Skills", icon: Award },
+            { id: "certifications", label: "Certifications", icon: Award }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-6 py-3 rounded-lg flex items-center gap-2 transition-all ${
+                activeTab === tab.id
+                  ? "bg-green-500 dark:bg-green-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              <tab.icon size={18} />
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* Resume Content */}

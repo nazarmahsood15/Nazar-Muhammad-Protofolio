@@ -22,9 +22,11 @@ const nextConfig = {
     optimizeCss: true,
   },
   reactStrictMode: true,
+
+  // 🚀 Disable ESLint errors during build
   eslint: {
     ignoreDuringBuilds: true,
   },
 };
 
-export default nextConfig; // ✅ Correct for .mjs
+export default nextConfig;
