@@ -372,24 +372,24 @@ export default function Contact() {
     {
       icon: <Mail size={24} />,
       title: "Email",
-      content: "hello@nazarkhan.dev",
-      link: "mailto:hello@nazarkhan.dev",
+      content: "Nazarmahsood15",
+      link: "Nazarmahsood15@gmail.com",
       color: "from-red-500 to-pink-500",
       description: "Drop me a line anytime"
     },
     {
       icon: <Phone size={24} />,
       title: "Phone",
-      content: "+92 123 456 7890",
-      link: "tel:+921234567890",
+      content: "+923449310665",
+      link: "tel:92449310665",
       color: "from-green-500 to-emerald-500",
       description: "Available during business hours"
     },
     {
       icon: <MapPin size={24} />,
       title: "Location",
-      content: "South Waziristan, Pakistan",
-      link: "https://maps.google.com/?q=South+Waziristan",
+      content: "dera ismail khan, Pakistan",
+      link: "https://maps.google.com/?q=dera-ismail-khan-Pakistan",
       color: "from-blue-500 to-cyan-500",
       description: "Remote work worldwide"
     },
@@ -407,28 +407,28 @@ export default function Contact() {
     {
       icon: <Github size={20} />,
       name: "GitHub",
-      url: "https://github.com",
+      url: "https://github.com/Nazarmahsood15",
       color: "hover:bg-gray-800 dark:hover:bg-gray-700",
       followers: "1.2K"
     },
     {
       icon: <Linkedin size={20} />,
       name: "LinkedIn",
-      url: "https://linkedin.com",
+      url: "https://linkedin.com/in/nazarmahsood15",
       color: "hover:bg-blue-600",
       followers: "2.5K"
     },
     {
       icon: <Twitter size={20} />,
       name: "Twitter",
-      url: "https://twitter.com",
+      url: "https://twitter.com/Nazarmahsood15",
       color: "hover:bg-blue-400",
       followers: "890"
     },
     {
       icon: <Instagram size={20} />,
       name: "Instagram",
-      url: "https://instagram.com",
+      url: "https://instagram.com/Nazarmahsood15",
       color: "hover:bg-pink-600",
       followers: "1.8K"
     }

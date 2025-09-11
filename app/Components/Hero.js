@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "./Header";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
   ChevronDown, Sparkles, Github, Linkedin, Twitter, Mail,
   Play, Code, Camera, Mic
@@ -32,26 +32,25 @@ const STATS = [
   { value: 12, suffix: "K", label: "YouTube Subs" }
 ];
 
-// 🔹 Counter component (requestAnimationFrame-based)
+// 🔹 Counter component (optimized with GSAP)
 const Counter = ({ value, suffix }) => {
-  const [count, setCount] = useState(0);
+  const elementRef = useRef(null);
 
   useEffect(() => {
-    let frame = 0;
-    const duration = 2000;
-    const totalFrames = Math.round(duration / (1000 / 60));
+    const el = elementRef.current;
+    if (!el) return;
 
-    const animate = () => {
-      frame++;
-      const progress = Math.min(frame / totalFrames, 1);
-      setCount(Math.round(value * progress));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
+    gsap.to(el, {
+      innerText: value,
+      duration: 2,
+      snap: { innerText: 1 },
+      onComplete: function() {
+        el.innerText = value + suffix;
+      }
+    });
+  }, [value, suffix]);
 
-    requestAnimationFrame(animate);
-  }, [value]);
-
-  return <span>{count}{suffix}</span>;
+  return <span ref={elementRef}>0{suffix}</span>;
 };
 
 export default function Hero() {
@@ -60,59 +59,11 @@ export default function Hero() {
   const textRef = useRef(null);
   const canvasRef = useRef(null);
   const nameRef = useRef(null);
+  const rafId = useRef(null);
 
-  // 🔹 Typing effect
-  useEffect(() => {
-    const textElement = textRef.current;
-    if (!textElement) return;
-
-    const text = textElement.textContent;
-    textElement.textContent = "";
-    let i = 0;
-
-    const animateTyping = () => {
-      if (i < text.length) {
-        textElement.textContent += text.charAt(i++);
-        requestAnimationFrame(animateTyping);
-      }
-    };
-
-    animateTyping();
-  }, []);
-
-  // 🔹 Scroll indicator visibility
-  useEffect(() => {
-    const handleScroll = () => setScrollIndicatorVisible(window.scrollY <= 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // 🔹 3D tilt effect
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!nameRef.current) return;
-      const offsetX = ((e.clientX - window.innerWidth / 2) / window.innerWidth) * 20;
-      const offsetY = ((e.clientY - window.innerHeight / 2) / window.innerHeight) * -20;
-      nameRef.current.style.transform = `perspective(1000px) rotateX(${offsetY}deg) rotateY(${offsetX}deg)`;
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  // 🔹 Canvas animation (optimized)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resizeCanvas();
-
-    const sperms = Array.from({ length: 25 }, () => ({
+  // Memoize sperm data creation
+  const createSpermData = useCallback((canvas) => {
+    return Array.from({ length: 25 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       speed: 0.8 + Math.random() * 1.2,
@@ -125,8 +76,96 @@ export default function Hero() {
       color: `hsl(${120 + Math.random() * 10}, 80%, 60%)`,
       tailSegments: 12 + Math.floor(Math.random() * 8),
     }));
+  }, []);
+
+  // 🔹 Throttled mouse move handler
+  const handleMouseMove = useCallback((e) => {
+    if (!nameRef.current) return;
+    
+    // Use requestAnimationFrame to throttle updates
+    if (rafId.current) cancelAnimationFrame(rafId.current);
+    
+    rafId.current = requestAnimationFrame(() => {
+      const offsetX = ((e.clientX - window.innerWidth / 2) / window.innerWidth) * 20;
+      const offsetY = ((e.clientY - window.innerHeight / 2) / window.innerHeight) * -20;
+      nameRef.current.style.transform = `perspective(1000px) rotateX(${offsetY}deg) rotateY(${offsetX}deg)`;
+    });
+  }, []);
+
+  // 🔹 Consolidated useEffect hooks for better performance
+  useEffect(() => {
+    // Typing effect
+    const textElement = textRef.current;
+    if (textElement) {
+      const text = textElement.textContent;
+      textElement.textContent = "";
+      let i = 0;
+
+      const animateTyping = () => {
+        if (i < text.length) {
+          textElement.textContent += text.charAt(i++);
+          requestAnimationFrame(animateTyping);
+        }
+      };
+
+      animateTyping();
+    }
+
+    // Scroll indicator visibility
+    const handleScroll = () => setScrollIndicatorVisible(window.scrollY <= 50);
+    window.addEventListener("scroll", handleScroll);
+    
+    // Mouse move for 3D tilt
+    window.addEventListener("mousemove", handleMouseMove);
+    
+    // GSAP animations
+    const tl = gsap.timeline();
+    tl.fromTo(".hero-title", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, delay: 0.2 })
+      .fromTo(".hero-subtitle", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+      .fromTo(".hero-buttons", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+      .fromTo(".hero-social", { opacity: 0 }, { opacity: 1, duration: 1 }, "-=0.5");
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      tl.kill();
+    };
+  }, [handleMouseMove]);
+
+  // 🔹 Canvas animation (optimized with visibility check)
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext("2d");
+    let animationFrameId = null;
+    let isTabActive = true;
+
+    const handleVisibilityChange = () => {
+      isTabActive = !document.hidden;
+      if (isTabActive && !animationFrameId) {
+        draw();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+
+    // Create sperm data
+    const sperms = createSpermData(canvas);
 
     const draw = () => {
+      if (!isTabActive) {
+        animationFrameId = null;
+        return;
+      }
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const now = performance.now();
 
@@ -176,21 +215,18 @@ export default function Hero() {
         }
       });
 
-      requestAnimationFrame(draw);
+      animationFrameId = requestAnimationFrame(draw);
     };
 
     draw();
     window.addEventListener("resize", resizeCanvas);
-    return () => window.removeEventListener("resize", resizeCanvas);
-  }, []);
 
-  // 🔹 GSAP animations
-  useEffect(() => {
-    gsap.fromTo(".hero-title", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, delay: 0.2 });
-    gsap.fromTo(".hero-subtitle", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.5 });
-    gsap.fromTo(".hero-buttons", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.8 });
-    gsap.fromTo(".hero-social", { opacity: 0 }, { opacity: 1, duration: 1, delay: 1.2 });
-  }, []);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("resize", resizeCanvas);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [createSpermData]);
 
   return (
     <section className="relative flex flex-col items-center justify-center min-h-screen 
@@ -221,7 +257,7 @@ export default function Hero() {
         {/* Name */}
         <div ref={nameRef} className="relative">
           <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight">
-            Hi, I'm <span className="text-green-400 animate-pulse font-serif">Nazar Muhammad</span>
+            Hi, I&apos;m <span className="text-green-400 animate-pulse font-serif">Nazar Muhammad</span>
           </h1>
         </div>
 
@@ -261,7 +297,7 @@ export default function Hero() {
              hover:border-green-400 hover:bg-green-500/10 transition-all duration-300 overflow-hidden flex items-center justify-center gap-2"
 >
   <Mail size={20} />
-  Let's Talk
+  Let&apos;s Talk
   <div className="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
 </button>
 

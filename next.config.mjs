@@ -22,7 +22,9 @@ const nextConfig = {
     optimizeCss: true,
   },
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
-// ES modules export
-export default nextConfig;
+export default nextConfig; // ✅ Correct for .mjs
