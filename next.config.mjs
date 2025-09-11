@@ -18,9 +18,7 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  experimental: {
-    optimizeCss: true,
-  },
+ 
   reactStrictMode: true,
 
   // 🚀 Disable ESLint errors during build
