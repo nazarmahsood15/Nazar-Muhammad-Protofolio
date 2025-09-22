@@ -130,7 +130,7 @@ export default function Resume() {
 
   const downloadCV = useCallback(() => {
     const link = document.createElement("a");
-    link.href = "/cv.pdf";
+    link.href = "/cv.pdf"; // Ensure cv.pdf is in the public directory
     link.download = "cv.pdf";
     document.body.appendChild(link);
     link.click();
@@ -184,17 +184,17 @@ export default function Resume() {
           Here&apos;s a summary of my experience, education, and skills. Download my full CV for more details.
         </p>
 
-        {/* Download Button */}
-        <div className="text-center mb-16">
-          <button
-            onClick={downloadCV}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 dark:bg-green-600 text-white rounded-lg font-medium hover:bg-green-600 dark:hover:bg-green-700 transition-colors group"
-          >
-            <Download size={20} />
-            Download CV
-            <FileText size={20} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
-        </div>
+    {/* Download Button */}
+<div className="flex justify-center my-8 px-4">
+  <a
+    href="/api/download-cv"
+    className="flex items-center gap-2 px-6 py-3 bg-green-500 dark:bg-green-600 text-white rounded-lg font-medium hover:bg-green-600 dark:hover:bg-green-700 transition-colors text-sm sm:text-base md:text-lg"
+  >
+    <Download size={20} />
+    Download CV
+  </a>
+</div>
+
 
         {/* Resume Tabs */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">

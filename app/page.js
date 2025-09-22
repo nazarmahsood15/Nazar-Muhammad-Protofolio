@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import Particles from "./Components/Particles";
 import Hero from "./Components/Hero";
 import About from "./Components/About";
 import Projects from "./Components/Projects";
@@ -8,12 +12,7 @@ import Experience from "./Components/Experience";
 import Testimonials from "./Components/Testimonials";
 import Resume from "./Components/Resume";
 import Contact from "./Components/Contact";
-import gsap from "gsap";
-import SpermAnimation from "./Components/SpermAnimation"
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Particles from "./Components/Particles";
 
-// Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Page() {
@@ -24,19 +23,13 @@ export default function Page() {
   const testimonialsRef = useRef(null);
   const resumeRef = useRef(null);
   const contactRef = useRef(null);
-  const spermRef = useRef (null);
 
-
-
-
-  // Function to scroll to a specific section
   const scrollToSection = (sectionRef) => {
     if (sectionRef && sectionRef.current) {
       sectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  // Expose the scroll function globally so Header can access it
   useEffect(() => {
     window.scrollToSection = scrollToSection;
     window.sectionRefs = {
@@ -45,7 +38,7 @@ export default function Page() {
       experience: experienceRef,
       testimonials: testimonialsRef,
       resume: resumeRef,
-      contact: contactRef
+      contact: contactRef,
     };
     return () => {
       delete window.scrollToSection;
@@ -53,15 +46,10 @@ export default function Page() {
     };
   }, []);
 
-  // GSAP animations for sections
   useEffect(() => {
     if (!mainRef.current) return;
 
     const sections = mainRef.current.querySelectorAll("section");
-
-
-
-    
     sections.forEach((section) => {
       gsap.fromTo(
         section,
@@ -75,8 +63,8 @@ export default function Page() {
             trigger: section,
             start: "top 85%",
             end: "bottom 60%",
-            toggleActions: "play none none reset"
-          }
+            toggleActions: "play none none reset",
+          },
         }
       );
     });
@@ -94,8 +82,8 @@ export default function Page() {
           scrollTrigger: {
             trigger: heading,
             start: "top 90%",
-            toggleActions: "play none none reset"
-          }
+            toggleActions: "play none none reset",
+          },
         }
       );
     });
@@ -106,25 +94,21 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="relative bg-black text-white" ref={mainRef}>
-      {/* Particle Background */}
-      <div
-        id="particles-js"
-        className="absolute inset-0 -z-10"
-        style={{ width: "100%", height: "100%" }}
-      ></div>
-
-      <Hero />
-      <section ref={aboutRef}><About /></section>
-      <section ref={projectsRef}><Projects /></section>
-      <section ref={experienceRef}><Experience /></section>
-      <section ref={testimonialsRef}><Testimonials /></section>
-      <section ref={resumeRef}><Resume /></section>
-      <section ref={contactRef}><Contact /></section>
-           {/* <section ref={projectsRef}><ProjectsSnapScroll /></section> */}
-
-
-            
-    </main>
+    <>
+     
+      <main
+        className="relative bg-black text-white pt-24" // padding to avoid header overlap
+        ref={mainRef}
+      >
+        <Particles />
+        <Hero />
+        <section ref={aboutRef}><About /></section>
+        <section ref={projectsRef}><Projects /></section>
+        <section ref={experienceRef}><Experience /></section>
+        <section ref={testimonialsRef}><Testimonials /></section>
+        <section ref={resumeRef}><Resume /></section>
+        <section ref={contactRef}><Contact /></section>
+      </main>
+    </>
   );
 }
