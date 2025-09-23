@@ -179,6 +179,10 @@ export default function Particles() {
         }
       }
     }
+    // Reduced number of neurons for faster performance
+    const INPUT_NEURONS = 10;
+    const HIDDEN_NEURONS = 25;
+    const MAX_CONNECTION_DISTANCE = 150; // reduced distance
 
     // Initialize neurons and connections
     const initNeurons = () => {

@@ -417,6 +417,7 @@ const HoverImage = () => (
     }}
   >
     <Image
+    
       src="/imag11.jpg"
       alt="My portrait"
       width={250}

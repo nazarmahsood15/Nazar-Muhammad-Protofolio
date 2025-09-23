@@ -1,7 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Particles from "./Components/Particles";
 import Header from "./Components/Header";
+import Particles from "./Components/Particles";
+import MouseCursor from "./Components/MouseCursorParticles";
+import ClientWrapper from "./Components/ClientWrapper"; // loader wrapper
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,26 +18,27 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Nazar Muhammad",
   description: "Portfolio of Nazar Muhammad – Software Engineer & Developer",
-  icons: {
-    icon: "/favicon.ico", // Make sure this file exists in public/
-  },
+  icons: { icon: "/favicon.ico" },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white overflow-y-auto`}
       >
-        {/* Header always visible */}
         <Header />
 
-        {/* Particle Background */}
+        {/* Original particles */}
         <Particles />
 
-        {/* Page content */}
-        {children}
+        {/* Custom mouse cursor particles */}
+        <MouseCursor />
+
+        {/* Wrap children with loader */}
+        <ClientWrapper>
+          {children}
+        </ClientWrapper>
       </body>
     </html>
   );
