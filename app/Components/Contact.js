@@ -1,12 +1,13 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { 
-  Mail, Phone, MapPin, Send, MessageCircle, Linkedin, Github, Twitter, Instagram, 
+import {
+  Mail, Phone, MapPin, Send, MessageCircle, Linkedin, Github, Twitter, Instagram,
   X, ChevronRight, Sparkles, Globe, Calendar, Zap, Clock, TrendingUp, Users
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Particles from "./Particles";
+import AdBanner from "./AdBanner";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -23,7 +24,7 @@ export default function Contact() {
   const [activeField, setActiveField] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [showConfetti, setShowConfetti] = useState(false);
-  
+
   const contactRef = useRef(null);
   const formRef = useRef(null);
   const titleRef = useRef(null);
@@ -32,19 +33,19 @@ export default function Contact() {
 
   useEffect(() => {
     // Enhanced title animation with 3D perspective
-    gsap.fromTo(titleRef.current, 
-      { 
-        opacity: 0, 
-        y: 100, 
+    gsap.fromTo(titleRef.current,
+      {
+        opacity: 0,
+        y: 100,
         rotationX: -45,
         scale: 0.8
       },
-      { 
-        opacity: 1, 
-        y: 0, 
+      {
+        opacity: 1,
+        y: 0,
         rotationX: 0,
         scale: 1,
-        duration: 1.8, 
+        duration: 1.8,
         ease: "power4.out",
         scrollTrigger: {
           trigger: titleRef.current,
@@ -57,18 +58,18 @@ export default function Contact() {
     // Enhanced 3D card effect for the form
     if (formRef.current) {
       const formCard = formRef.current;
-      
+
       const handleMouseMove = (e) => {
         const rect = formCard.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        
+
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        
+
         const rotateY = (x - centerX) / 20;
         const rotateX = (centerY - y) / 20;
-        
+
         gsap.to(formCard, {
           rotationY: rotateY,
           rotationX: rotateX,
@@ -88,7 +89,7 @@ export default function Contact() {
           });
         });
       };
-      
+
       const handleMouseLeave = () => {
         gsap.to(formCard, {
           rotationY: 0,
@@ -107,10 +108,10 @@ export default function Contact() {
           });
         });
       };
-      
+
       formCard.addEventListener("mousemove", handleMouseMove);
       formCard.addEventListener("mouseleave", handleMouseLeave);
-      
+
       return () => {
         formCard.removeEventListener("mousemove", handleMouseMove);
         formCard.removeEventListener("mouseleave", handleMouseLeave);
@@ -120,10 +121,10 @@ export default function Contact() {
     // Staggered animation for contact items
     const contactItems = contactRef.current?.querySelectorAll(".contact-item");
     if (contactItems) {
-      gsap.fromTo(contactItems, 
-        { 
-          opacity: 0, 
-          y: 60, 
+      gsap.fromTo(contactItems,
+        {
+          opacity: 0,
+          y: 60,
           rotationY: -15,
           scale: 0.9
         },
@@ -149,11 +150,11 @@ export default function Contact() {
     if (socialIcons) {
       socialIcons.forEach((icon, index) => {
         // Initial animation
-        gsap.fromTo(icon, 
+        gsap.fromTo(icon,
           { opacity: 0, scale: 0, rotation: -180 },
-          { 
-            opacity: 1, 
-            scale: 1, 
+          {
+            opacity: 1,
+            scale: 1,
             rotation: 0,
             duration: 0.8,
             delay: index * 0.1,
@@ -200,7 +201,7 @@ export default function Contact() {
   // Enhanced confetti effect
   const createConfetti = () => {
     if (!formRef.current) return;
-    
+
     setShowConfetti(true);
     const confettiContainer = document.createElement("div");
     confettiContainer.className = "fixed inset-0 pointer-events-none z-50";
@@ -214,12 +215,12 @@ export default function Contact() {
       const confetti = document.createElement("div");
       const shape = shapes[Math.floor(Math.random() * shapes.length)];
       const color = colors[Math.floor(Math.random() * colors.length)];
-      
+
       confetti.className = `absolute w-3 h-3 ${shape === 'circle' ? 'rounded-full' : shape === 'triangle' ? 'triangle' : ''}`;
       confetti.style.backgroundColor = color;
       confetti.style.left = `${Math.random() * 100}%`;
       confetti.style.top = `-10px`;
-      
+
       if (shape === 'triangle') {
         confetti.style.width = '0';
         confetti.style.height = '0';
@@ -228,9 +229,9 @@ export default function Contact() {
         confetti.style.borderRight = `6px solid transparent`;
         confetti.style.borderBottom = `10px solid ${color}`;
       }
-      
+
       confettiContainer.appendChild(confetti);
-      
+
       gsap.to(confetti, {
         y: window.innerHeight + 100,
         x: `+=${Math.random() * 200 - 100}`,
@@ -252,29 +253,29 @@ export default function Contact() {
   // Form validation
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.name.trim()) {
       errors.name = "Name is required";
     } else if (formData.name.trim().length < 2) {
       errors.name = "Name must be at least 2 characters";
     }
-    
+
     if (!formData.email.trim()) {
       errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = "Please enter a valid email";
     }
-    
+
     if (!formData.subject.trim()) {
       errors.subject = "Subject is required";
     }
-    
+
     if (!formData.message.trim()) {
       errors.message = "Message is required";
     } else if (formData.message.trim().length < 10) {
       errors.message = "Message must be at least 10 characters";
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -285,7 +286,7 @@ export default function Contact() {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors(prev => ({
@@ -297,7 +298,7 @@ export default function Contact() {
 
   const handleFocus = (fieldName) => {
     setActiveField(fieldName);
-    
+
     // Animate field focus
     const field = document.querySelector(`[name="${fieldName}"]`);
     if (field) {
@@ -311,7 +312,7 @@ export default function Contact() {
 
   const handleBlur = (fieldName) => {
     setActiveField(null);
-    
+
     // Animate field blur
     const field = document.querySelector(`[name="${fieldName}"]`);
     if (field) {
@@ -325,7 +326,7 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       // Shake form on validation error
       gsap.to(formRef.current, {
@@ -335,32 +336,32 @@ export default function Contact() {
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       setIsLoading(false);
       setIsSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
-      
+
       // Create enhanced confetti effect
       createConfetti();
-      
+
       // Animate success message
       if (successRef.current) {
         gsap.fromTo(successRef.current,
           { opacity: 0, scale: 0.8, y: 20 },
-          { 
-            opacity: 1, 
-            scale: 1, 
+          {
+            opacity: 1,
+            scale: 1,
             y: 0,
             duration: 0.8,
             ease: "back.out(2)"
           }
         );
       }
-      
+
       // Reset submission status after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false);
@@ -435,33 +436,33 @@ export default function Contact() {
   ];
 
   const stats = [
-    { 
-      value: "< 24h", 
-      label: "Avg. Response Time", 
+    {
+      value: "< 24h",
+      label: "Avg. Response Time",
       icon: <Clock size={18} />,
       color: "from-blue-500 to-cyan-500"
     },
-    { 
-      value: "100%", 
-      label: "Response Rate", 
+    {
+      value: "100%",
+      label: "Response Rate",
       icon: <TrendingUp size={18} />,
       color: "from-green-500 to-emerald-500"
     },
-    { 
-      value: "1-2", 
-      label: "Business Days", 
+    {
+      value: "1-2",
+      label: "Business Days",
       icon: <Calendar size={18} />,
       color: "from-purple-500 to-indigo-500"
     }
   ];
 
   return (
-    <section 
-      id="contact" 
+    <section
+      id="contact"
       className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-black dark:to-gray-800 text-black dark:text-white overflow-hidden relative"
     >
                        <Particles count={40} className="absolute inset-0 z-0" />
-      
+
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
@@ -475,24 +476,24 @@ export default function Contact() {
             <Sparkles className="text-green-600 dark:text-green-400 animate-pulse" size={20} />
             <span className="ml-2 text-sm font-semibold text-green-600 dark:text-green-400">Let's Connect & Create</span>
           </div>
-          
+
           <h2 ref={titleRef} className="text-5xl md:text-6xl font-bold mb-6 transform-gpu">
             Get In{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 animate-gradient">
               Touch
             </span>
           </h2>
-          
+
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-            Have a project in mind or want to discuss potential opportunities? 
+            Have a project in mind or want to discuss potential opportunities?
             I'm always excited to collaborate on innovative ideas and bring visions to life.
           </p>
-          
+
           {/* Enhanced Stats */}
           <div className="flex flex-wrap justify-center gap-6 mt-12">
             {stats.map((stat, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="stat-value group relative overflow-hidden"
               >
                 <div className={`absolute inset-0 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity rounded-2xl`}></div>
@@ -518,7 +519,7 @@ export default function Contact() {
                 Contact Information
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg leading-relaxed">
-                I'm always open to discussing new projects, creative ideas, or opportunities 
+                I'm always open to discussing new projects, creative ideas, or opportunities
                 to be part of your vision. Let's create something amazing together!
               </p>
             </div>
@@ -526,8 +527,8 @@ export default function Contact() {
             {/* Enhanced Contact Methods */}
             <div className="space-y-6">
               {contactInfo.map((item, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="contact-item group relative"
                 >
                   <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-teal-500 opacity-0 group-hover:opacity-20 blur-lg transition-all duration-500 rounded-2xl"></div>
@@ -549,9 +550,9 @@ export default function Contact() {
                         {item.description}
                       </p>
                     </div>
-                    <ChevronRight 
-                      size={20} 
-                      className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 text-green-500 transform group-hover:translate-x-1" 
+                    <ChevronRight
+                      size={20}
+                      className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 text-green-500 transform group-hover:translate-x-1"
                     />
                   </a>
                 </div>
@@ -585,14 +586,14 @@ export default function Contact() {
           </div>
 
           {/* Enhanced Contact Form */}
-          <div 
+          <div
             ref={formRef}
             className="contact-item relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-500"
             style={{ transformStyle: 'preserve-3d' }}
           >
             {/* Enhanced 3D effect elements */}
             <div className="absolute -z-10 -inset-3 bg-gradient-to-r from-green-400 via-teal-400 to-blue-400 opacity-20 blur-2xl rounded-3xl"></div>
-            
+
             <div className="relative" style={{ transform: 'translateZ(20px)' }}>
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-3 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl text-white">
@@ -600,9 +601,9 @@ export default function Contact() {
                 </div>
                 <h3 className="text-3xl font-bold">Send Me a Message</h3>
               </div>
-              
+
               {isSubmitted ? (
-                <div 
+                <div
                   ref={successRef}
                   className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-6 py-8 rounded-2xl mb-6 text-center relative overflow-hidden"
                 >
@@ -678,7 +679,7 @@ export default function Contact() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Subject Field */}
                   <div className="form-element relative">
                     <label htmlFor="subject" className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
@@ -699,7 +700,7 @@ export default function Contact() {
                         aria-describedby={formErrors.subject ? "subject-error" : undefined}
                       />
                       {formErrors.subject && (
-                
+
                         <p id="subject-error" className="text-red-500 text-sm mt-2 flex items-center gap-1">
                           <X size={14} />
                           {formErrors.subject}
@@ -707,7 +708,7 @@ export default function Contact() {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Message Field */}
                   <div className="form-element relative">
                     <label htmlFor="message" className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
@@ -740,7 +741,7 @@ export default function Contact() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Enhanced Submit Button */}
                   <button
                     type="submit"
@@ -749,7 +750,7 @@ export default function Contact() {
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-green-600 via-teal-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="absolute inset-0 bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150"></div>
-                    
+
                     <span className="relative z-10 flex items-center gap-3">
                       {isLoading ? (
                         <>
@@ -764,7 +765,7 @@ export default function Contact() {
                         </>
                       )}
                     </span>
-                    
+
                     {/* Ripple effect */}
                     <div className="absolute inset-0 overflow-hidden rounded-xl">
                       <div className="absolute inset-0 bg-white opacity-0 group-active:opacity-30 transform scale-0 group-active:scale-100 transition-all duration-300 rounded-full"></div>
@@ -787,20 +788,20 @@ export default function Contact() {
                   </div>
                 </form>
               )}
-              
+
               {/* Alternative Contact Methods */}
               <div className="form-element mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <h5 className="font-semibold mb-4 text-gray-700 dark:text-gray-300">Prefer other ways to connect?</h5>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <a 
-                    href="mailto:hello@nazarkhan.dev" 
+                  <a
+                    href="mailto:hello@nazarkhan.dev"
                     className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors group"
                   >
                     <Mail size={16} className="text-green-500 group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-medium">Direct Email</span>
                   </a>
-                  <a 
-                    href="https://calendly.com/nazarkhan" 
+                  <a
+                    href="https://calendly.com/nazarkhan"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group"
@@ -817,7 +818,7 @@ export default function Contact() {
         {/* Enhanced Interactive Map Section */}
         <div className="contact-item mt-20 relative group">
           <div className="absolute -inset-4 bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 opacity-20 group-hover:opacity-30 blur-2xl rounded-3xl transition-all duration-500"></div>
-          
+
           <div className="relative overflow-hidden rounded-3xl shadow-2xl">
             <div className="h-80 md:h-96 flex items-center justify-center bg-gradient-to-br from-green-500 via-teal-500 to-blue-500 relative">
               {/* Animated background elements */}
@@ -827,7 +828,7 @@ export default function Contact() {
                 <div className="absolute bottom-20 left-20 w-12 h-12 bg-white/10 rounded-full animate-pulse delay-700"></div>
                 <div className="absolute bottom-10 right-10 w-24 h-24 bg-white/10 rounded-full animate-pulse delay-500"></div>
               </div>
-              
+
               <div className="text-center text-white z-10 relative">
                 <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full mb-4">
@@ -847,11 +848,11 @@ export default function Contact() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
-            
+
             {/* Map interaction hint */}
             <div className="absolute bottom-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium shadow-lg">
               <span className="flex items-center gap-2">
@@ -919,10 +920,12 @@ export default function Contact() {
               <div className="text-xs">
                 <div className="font-medium">John Doe</div>
                 <div className="text-gray-500">CEO, TechCorp</div>
+
               </div>
             </div>
           </div>
         </div>
+         <AdBanner />
       </div>
 
       {/* Custom CSS for animations */}
@@ -931,17 +934,17 @@ export default function Contact() {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
         }
-        
+
         .animate-gradient {
           background-size: 200% 200%;
           animation: gradient 3s ease infinite;
         }
-        
+
         .triangle {
           width: 0;
           height: 0;
         }
-        
+
         /* Accessibility improvements */
         @media (prefers-reduced-motion: reduce) {
           .animate-pulse,
@@ -949,12 +952,12 @@ export default function Contact() {
           .animate-spin {
             animation: none;
           }
-          
+
           .group:hover .transform {
             transform: none;
           }
         }
-        
+
         /* Focus styles for better accessibility */
         input:focus,
         textarea:focus,
@@ -962,7 +965,7 @@ export default function Contact() {
           outline: 2px solid #10B981;
           outline-offset: 2px;
         }
-        
+
         /* High contrast mode support */
         @media (prefers-contrast: high) {
           .bg-gradient-to-r {
